@@ -25,28 +25,28 @@ db.init_app(app)
 @app.route('/')
 def get_books():
     """
-    Objectives:
-    Create a Flask route for the home page that queries the
-    Book table and returns:
-    - The render_template() function for the home.html template
-    - The books data returned by the database query, in a format
-    the Jinja code in the HTML file expects.
+    Returns a list of all books in the database.
+
+    Queries the database for all books and returns a list of
+    dictionaries containing the book data. Each dictionary
+    contains the book's ID, ISBN, title, publication date,
+    and author ID. The list of dictionaries is then rendered
+    in the 'home.html' template.
     """
-    ## Query the database for all books
-    books = Book.query.all()
-    ## Create a list of dictionaries to store book data
+    all_books = Book.query.all()
+
     books_data = []
-    for book in books:
+    for book in all_books:
         book_data = {
             'id': book.id,
             'isbn': book.isbn,
             'title': book.title,
             'publication_date': book.publication_date,
-            'author_id': book.author_id
+            'author': book.author.name,
         }
         books_data.append(book_data)
-    ## Render the template with the books data
-    return render_template('home.html'), 200
+
+    return render_template('home.html', books=books_data), 200
 
 
 @app.route('/add_author', methods=['GET', 'POST'])
@@ -80,11 +80,11 @@ def add_author():
         ## Add the new author to the database
         db.session.add(new_author)
         db.session.commit()
+
         ## Show a success message
         message = f"Author '{new_author.name}' added successfully."
         return render_template('add_author.html', message=message)
 
-    ## If the request method is GET, render the form
     return render_template('add_author.html')
 
 
