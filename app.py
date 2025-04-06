@@ -3,6 +3,17 @@ This is a simple Flask application that uses SQLAlchemy to
 manage a library database.
 This module sets up the Flask application and SQLAlchemy
 database connection.
+
+It defines several API endpoints to interact with the
+library database, including:
+- Retrieving all books
+- Adding a new author
+- Adding a new book
+- Deleting a book
+The application uses SQLite as the database backend and
+Jinja2 templates for rendering HTML pages.
+The application is designed to be run locally and opens
+a web browser to display the home page when started.
 """
 
 from flask import Flask, request, render_template
@@ -226,6 +237,6 @@ def delete_book(book_id):
 
 
 if __name__ == '__main__':
-    url = 'http://127.0.0.1:5000/home'
+    url = 'http://127.0.0.1:5002/home'
     webbrowser.open_new(url)
-    app.run(port=5000, debug=True)
+    app.run(port=5002, debug=True)
