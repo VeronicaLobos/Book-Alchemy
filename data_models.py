@@ -48,7 +48,7 @@ class Book(db.Model):
         id (int): The unique identifier for the book.
         isbn (int): The ISBN-number of the book.
         title (str): The title of the book.
-        publication_date (str): The publication date of the book.
+        publication_date (str): The publication year of the book.
         author_id (int): The ID of the author of the book.
         author (Author): The author of the book.
     """
@@ -56,7 +56,7 @@ class Book(db.Model):
     id = db.Column(Integer, primary_key=True, autoincrement=True)
     isbn = db.Column(Integer)
     title = db.Column(String)
-    publication_date = db.Column(String)
+    publication_date = db.Column(Integer)
     author_id = db.Column(Integer, ForeignKey('authors.id'))
     author = db.relationship("Author", back_populates="books")
 

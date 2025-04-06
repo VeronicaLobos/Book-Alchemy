@@ -6,10 +6,27 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
   </head>
   <body>
+    <div id="Form">
+      <h1>Add Book</h1>
+        <form action="/add_book" method="POST">
+          <label for="isbn">ISBN:</label>
+          <input type="number" id="isbn" name="isbn"><br><br>
+          <label for="title">Book Title:</label>
+          <input type="text" id="title" name="title" required><br><br>
+          <label for="author">Author:</label>
+          <input type="text" id="author" name="author" required><br><br>
+          <label for="publication_date">Publication Year:</label>
+          <input type="text" id="publication_date" name="publication_date"><br><br>
+          <input type="submit" value="Add Book">
+        </form>
+    </div>
 
-  <form action="/add_author" method="POST">
-  <!-- Add the form here -->
-  </form>
+    <!-- Insert message with resulting operation here -->
+  {% if message %}
+    <div id="Message">
+      <p>{{ message }}</p>
+    </div>
+  {% endif %}
 
   </body>
 </html>
