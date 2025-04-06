@@ -39,12 +39,21 @@ def get_books():
     list of books.
     """
     ## Get the sort_by and order parameters from the request
+    search_term = request.args.get('search', '')
     sort_by = request.args.get('sort', 'title')
     order = request.args.get('order', 'asc')
 
     ## Query the database for all books and their authors
     ## and sort the results based on the sort_by and order parameters
     query = Book.query.join(Author)
+
+    if search_term:
+        query = query.filter(Book.title.ilike(f'%{search_term}%') |
+                           Author.name.ilike(f'%{search_term}%'))
+        if not query.all():
+            ## If no books are found, show an error message
+            message = f"Search term '{search_term}' not found."
+            return render_template('home.html', message=message)
 
     if sort_by == 'title':
         query = query.order_by(asc(Book.title)

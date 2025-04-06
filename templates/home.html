@@ -6,12 +6,24 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>My Book App</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
   <body>
     <div class="list-books-title">
       <h1>My Book App</h1>
       <a href="/add_book" class="button">Add Book</a>
       <a href="/add_author" class="button">Add Author</a>
+      <form class="form" action="/home" method="GET">
+      <input type="text" placeholder="Search..." name="search">
+      <button type="submit" class="button"><i class="fa fa-search"></i></button>
+      </form>
+
+          <!-- Insert message with resulting operation here -->
+      {% if message %}
+        <div id="Message" class="message">
+        <p>{{ message }}</p>
+        </div>
+      {% endif %}
     </div>
 
     <div>
