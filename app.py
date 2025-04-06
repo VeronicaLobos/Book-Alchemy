@@ -7,34 +7,41 @@ database connection.
 
 from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
-from data_models import db, Author, Book
+from sqlalchemy import asc
 import os
 import webbrowser
+from data_models import db, Author, Book
 
 app = Flask(__name__)
-database_path = os.path.join(os.path.dirname(__file__), 'data', 'library.sqlite')
+database_path = os.path.join(os.path.dirname(__file__),
+                             'data','library.sqlite')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{database_path}'
 db.init_app(app)
 
 ## Create the database and tables, if they don't exist
-"""with app.app_context():
-    db.create_all()"""
+with app.app_context():
+    db.create_all()
 
 
 ## API endpoints
 
-@app.route('/')
+@app.route('/home')
 def get_books():
     """
     Returns a list of all books in the database.
 
-    Queries the database for all books and returns a list of
-    dictionaries containing the book data. Each dictionary
-    contains the book's ID, ISBN, title, publication date,
-    and author ID. The list of dictionaries is then rendered
-    in the 'home.html' template.
+    Queries the database for all books and their authors,
+    sorts them by author name and book title, and returns a
+    list of dictionaries containing the book data.
+    Each dictionary contains the book's ID, ISBN, title,
+    publication date, and author ID.
+    It returns a render of the home.html template with the
+    list of books.
     """
-    all_books = Book.query.all()
+    all_books = (
+        Book.query.join(Author)
+        .order_by(asc(Author.name), asc(Book.title))
+        .all())
 
     books_data = []
     for book in all_books:
@@ -42,8 +49,9 @@ def get_books():
             'id': book.id,
             'isbn': book.isbn,
             'title': book.title,
-            'publication_date': book.publication_date,
+            'year': book.year,
             'author': book.author.name,
+            'cover': book.cover,
         }
         books_data.append(book_data)
 
@@ -112,23 +120,35 @@ def add_book():
         isbn = request.form.get('isbn')
         title = request.form.get('title')
         author = request.form.get('author')
-        publication_date = request.form.get('publication_date')
+        year = request.form.get('year')
 
         ## Retrieve the author ID from the database
         author_obj = Author.query.filter_by(name=author).first()
         if author_obj:
             author_id = author_obj.id
+        else:
+            ## If the author does not exist, show an error message
+            message = (f"{author} not found in the database."
+                       f"Please add the author first.")
+            return render_template('add_book.html', message=message)
 
-            ## Create a new book object
-            new_book = Book(
+        ## Get the book cover image URL from Open Library API
+        if isbn:
+            cover = f"https://covers.openlibrary.org/b/isbn/{isbn}-M.jpg"
+        else:
+            cover = "https://covers.openlibrary.org/b/isbn/142157537X-M.jpg"
+
+        ## Create a new book object
+        new_book = Book(
                 isbn=isbn,
                 title=title,
-                publication_date=publication_date,
-                author_id=author_id
-            )
+                year=year,
+                author_id=author_id,
+                cover=cover
+        )
 
         ## Check if the book already exists in the database
-        existing_book = Book.query.filter_by(isbn=new_book.title).first()
+        existing_book = Book.query.filter_by(isbn=new_book.isbn).first()
         if existing_book:
             ## If the book already exists, show an error message
             message = f"Book with ISBN '{new_book.isbn}' already exists."
@@ -146,5 +166,6 @@ def add_book():
 
 
 if __name__ == '__main__':
-    webbrowser.open_new('http://127.0.0.1:5000/add_author')
-    app.run(debug=True)
+    url = 'http://127.0.0.1:5002/home'
+    webbrowser.open_new(url)
+    app.run(port=5002, debug=True)

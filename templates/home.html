@@ -8,9 +8,12 @@
   <body>
     :)
     {% for book in books %}
-    <div> <h3>{{ book.title }}</h3>
+    <div class="book">
+      <img class="book-cover" src="{{ book.cover }}" alt="No cover"/>
+      <div class="book-title"> {{ book.title }} </div>
+      <div class="book-author"> {{ book.author }} </div>
+      <div class="book-year"> ({{ book.year }}) </div>
     </div>
     {% endfor %}
-
   </body>
 </html>
