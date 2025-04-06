@@ -6,7 +6,6 @@ database connection.
 """
 
 from flask import Flask, request, render_template
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import asc, desc
 import os
 import webbrowser
@@ -23,7 +22,7 @@ with app.app_context():
     db.create_all()
 
 
-## API endpoints
+#### API endpoints ####
 
 @app.route('/home')
 def get_books():
@@ -190,7 +189,43 @@ def add_book():
     return render_template('add_book.html')
 
 
+@app.route('/book/<int:book_id>/delete', methods=['POST'])
+def delete_book(book_id):
+    """
+    Deletes a book from the database (sad).
+
+    If a Post request is made through the delete button in the
+    home.html template, it retrieves the book ID from the
+    URL.
+
+    If the book exists, it deletes the book from the database
+    and returns a success message.
+    If the book does not exist, it returns an error message.
+
+    Checks if the author has any other books in the database.
+    If the author has no other books, it deletes the author...
+    ... but I prefer not to delete the author.
+    """
+    book = Book.query.get(book_id)
+    if book:
+        #author_id = book.author_id
+        db.session.delete(book)
+        db.session.commit()
+
+        ## Check if the author has any other books in the database
+        #author = Author.query.get(author_id)
+        #if not author.books:
+        #    db.session.delete(author)
+        #    db.session.commit()
+
+        message = f"Book '{book.title}' deleted successfully."
+    else:
+        message = "Book not found."
+
+    return render_template('home.html', message=message)
+
+
 if __name__ == '__main__':
-    url = 'http://127.0.0.1:5002/home'
+    url = 'http://127.0.0.1:5000/home'
     webbrowser.open_new(url)
-    app.run(port=5002, debug=True)
+    app.run(port=5000, debug=True)

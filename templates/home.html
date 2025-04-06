@@ -40,6 +40,9 @@
       {% for book in books %}
         <article class="book">
           <img class="book-cover" src="{{ book.cover }}" alt="{{ book.title }} cover"/>
+          <form method="POST" action="{{ url_for('delete_book', book_id=book.id) }}">
+            <button type="submit" class="button"><i class="fa fa-trash" aria-hidden="true"></i></i></button>
+          </form>
           <div class="book-title"> {{ book.title }} </div>
           <div class="book-year"> ({{ book.year }}) </div>
           <div class="book-author"> {{ book.author }} </div>
