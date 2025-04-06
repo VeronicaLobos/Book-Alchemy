@@ -7,7 +7,7 @@ database connection.
 
 from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import asc
+from sqlalchemy import asc, desc
 import os
 import webbrowser
 from data_models import db, Author, Book
@@ -31,18 +31,34 @@ def get_books():
     Returns a list of all books in the database.
 
     Queries the database for all books and their authors,
-    sorts them by author name and book title, and returns a
-    list of dictionaries containing the book data.
+    sorts the results based on the sort_by and order parameters,
+    and returns a list of dictionaries containing the book data.
     Each dictionary contains the book's ID, ISBN, title,
     publication date, and author ID.
     It returns a render of the home.html template with the
     list of books.
     """
-    all_books = (
-        Book.query.join(Author)
-        .order_by(asc(Author.name), asc(Book.title))
-        .all())
+    ## Get the sort_by and order parameters from the request
+    sort_by = request.args.get('sort', 'title')
+    order = request.args.get('order', 'asc')
 
+    ## Query the database for all books and their authors
+    ## and sort the results based on the sort_by and order parameters
+    query = Book.query.join(Author)
+
+    if sort_by == 'title':
+        query = query.order_by(asc(Book.title)
+                               if order == 'asc' else desc(Book.title))
+    elif sort_by == 'author':
+        query = query.order_by(asc(Author.name)
+                               if order == 'asc' else desc(Author.name))
+    elif sort_by == 'year':
+        query = query.order_by(asc(Book.year)
+                               if order == 'asc' else desc(Book.year))
+
+    all_books = query.all()
+
+    ## Create a list of dictionaries containing the book data
     books_data = []
     for book in all_books:
         book_data = {

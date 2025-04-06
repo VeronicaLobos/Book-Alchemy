@@ -10,11 +10,19 @@
   <body>
     <div class="list-books-title">
       <h1>My Book App</h1>
-    </div>
-    <div>
       <a href="/add_book" class="button">Add Book</a>
       <a href="/add_author" class="button">Add Author</a>
     </div>
+
+    <div>
+      <a href="/home?sort=title&order=asc" class="button">By Title (a-z)</a>
+      <a href="/home?sort=title&order=desc" class="button">By Title (z-a)</a>
+      <a href="/home?sort=author&order=asc" class="button">By Author (a-z)</a>
+      <a href="/home?sort=author&order=desc" class="button">By Author (z-a)</a>
+      <a href="/home?sort=year&order=asc" class="button">By Year (oldest)</a>
+      <a href="/home?sort=year&order=desc" class="button">By Year (newest)</a>
+    </div>
+
 
     <div class="books-grid">
       {% for book in books %}
