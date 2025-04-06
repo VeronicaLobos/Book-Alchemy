@@ -4,10 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>My Book App</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
-    <div id="Form">
-      <h1>Add Book</h1>
+  <div>
+      <a href="/home" class="button">Books</a>
+      <a href="/add_author" class="button">Add Author</a>
+    </div>
+    <div class="form" id="Form">
+      <h2>Add Book</h2>
         <form action="/add_book" method="POST">
           <label for="isbn">ISBN:</label>
           <input type="text" id="isbn" name="isbn"><br><br>
@@ -17,13 +23,13 @@
           <input type="text" id="author" name="author" required><br><br>
           <label for="year">Publication Year:</label>
           <input type="text" id="year" name="year"><br><br>
-          <input type="submit" value="Add Book">
+          <input type="submit" value="Add Book" class="button">
         </form>
     </div>
 
     <!-- Insert message with resulting operation here -->
   {% if message %}
-    <div id="Message">
+    <div id="Message" class="message">
       <p>{{ message }}</p>
     </div>
   {% endif %}

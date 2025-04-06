@@ -4,11 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>My Book App</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
-
-  <div id="Form">
-    <h1>Add Author</h1>
+  <div>
+      <a href="/home" class="button">Books</a>
+      <a href="/add_book" class="button">Add Book</a>
+    </div>
+  <div id="Form" class="form">
+    <h2>Add Author</h2>
       <form action="/add_author" method="POST">
         <label for="name">Author Name:</label>
         <input type="text" id="name" name="name" required><br><br>
@@ -16,7 +21,7 @@
         <input type="date" id="birth_date" name="birth_date"><br><br>
         <label for="date_of_death">Date of Death:</label>
         <input type="date" id="date_of_death" name="date_of_death"><br><br>
-        <input type="submit" value="Add Author">
+        <input type="submit" value="Add Author" class="button">
     </form>
   </div>
 

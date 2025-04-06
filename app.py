@@ -12,7 +12,7 @@ import os
 import webbrowser
 from data_models import db, Author, Book
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='_static')
 database_path = os.path.join(os.path.dirname(__file__),
                              'data','library.sqlite')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{database_path}'
