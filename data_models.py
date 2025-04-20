@@ -47,15 +47,15 @@ class Book(db.Model):
     Represents a book in the database.
     Attributes:
         id (int): The unique identifier for the book.
-        isbn (int): The ISBN-number of the book.
+        isbn (str): The ISBN-number of the book.
         title (str): The title of the book.
-        publication_date (str): The publication year of the book.
+        publication_date (int): The publication year of the book.
         author_id (int): The ID of the author of the book.
         author (Author): The author of the book.
     """
     __tablename__ = 'books'
     id = db.Column(Integer, primary_key=True, autoincrement=True)
-    isbn = db.Column(Integer)
+    isbn = db.Column(String, unique=True)
     title = db.Column(String)
     year = db.Column(Integer)
     cover = db.Column(String)

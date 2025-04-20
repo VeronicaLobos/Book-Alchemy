@@ -35,7 +35,7 @@ with app.app_context():
 
 #### API endpoints ####
 
-@app.route('/home')
+@app.route('/')
 def get_books():
     """
     Returns a list of all books in the database.
@@ -249,6 +249,6 @@ def delete_book(book_id):
 
 
 if __name__ == '__main__':
-    url = 'http://127.0.0.1:5002/home'
+    url = 'http://127.0.0.1:5002/'
     webbrowser.open_new(url)
     app.run(port=5002, debug=True)

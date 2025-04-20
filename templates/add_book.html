@@ -11,7 +11,7 @@
             const isbnInput = document.getElementById('isbn');
             const yearInput = document.getElementById('year');
 
-            if (isbnInput.value.length < 10 || isbnInput.value.length > 13) {
+            if (isbnInput.value.length < 10 || isbnInput.value.length > 17) {
             alert("ISBN must be between 10 and 13 digits.");
             return false;
             }
@@ -27,7 +27,7 @@
   </head>
   <body>
   <div>
-      <a href="/home" class="button">Books</a>
+      <a href="/" class="button">Books</a>
       <a href="/add_author" class="button">Add Author</a>
   </div>
   <div class="form" id="Form">
@@ -40,7 +40,7 @@
             {% endfor %}
           </select><br><br>
           <label for="isbn">ISBN:</label>
-          <input type="text" id="isbn" name="isbn" required min="100000000" max="9999999999999"><br><br>
+          <input type="text" id="isbn" name="isbn" required><br><br>
           <label for="title">Book Title:</label>
           <input type="text" id="title" name="title" required minlength="1" maxlength="50"><br><br>
           <label for="year">Publication Year:</label>

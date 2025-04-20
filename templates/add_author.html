@@ -9,14 +9,14 @@
   </head>
   <body>
   <div>
-      <a href="/home" class="button">Books</a>
+      <a href="/" class="button">Books</a>
       <a href="/add_book" class="button">Add Book</a>
     </div>
   <div id="Form" class="form">
     <h2>Add Author</h2>
       <form action="/add_author" method="POST">
         <label for="name">Author Name:</label>
-        <input type="text" id="name" name="name" required><br><br>
+        <input type="text" id="name" name="name" required minlength="4" maxlength="50"><br><br>
         <label for="birth_date">Birthdate:</label>
         <input type="date" id="birth_date" name="birth_date"><br><br>
         <label for="date_of_death">Date of Death:</label>
