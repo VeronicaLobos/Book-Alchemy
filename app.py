@@ -16,10 +16,10 @@ The application is designed to be run locally and opens
 a web browser to display the home page when started.
 """
 
-from flask import Flask, request, render_template
-from sqlalchemy import asc, desc
 import os
 import webbrowser
+from flask import Flask, request, render_template
+from sqlalchemy import asc, desc
 from data_models import db, Author, Book
 
 app = Flask(__name__, static_folder='_static')
@@ -249,6 +249,6 @@ def delete_book(book_id):
 
 
 if __name__ == '__main__':
-    url = 'http://127.0.0.1:5002/'
-    webbrowser.open_new(url)
+    URL = 'http://127.0.0.1:5002/'
+    webbrowser.open_new(URL)
     app.run(port=5002, debug=True)
