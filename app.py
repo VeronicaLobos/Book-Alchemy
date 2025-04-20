@@ -99,36 +99,42 @@ def add_author():
     Adds a new author to the database.
 
     If a Get request is made, it returns a render of the
-    add_author.html template.
+    add_author.html template with a form to add a new author.
 
     If a Post request is made, it retrieves the data from the
-    form, checks if the author already exists in the database:
-     - If the author already exists, it returns an error message.
-        - If the author does not exist, it adds the new author
-        to the database and returns a success message.
+    form, checks if the author name is empty, and
+    checks if the author already exists in the database:
+    - If the author name is empty, it returns an error message.
+    - If the author already exists, it returns an error message.
+    - If the author does not exist, it adds the new author
+      to the database and returns a success message.
     """
     if request.method == 'POST':
-        ## Get the data from the form
+        author_name = request.form.get('name')
+        name = author_name.strip()
+        if not name:
+            message = "Author name cannot be empty."
+            return render_template('add_author.html',
+                                   message=message)
+
         new_author = Author(
-            name=request.form.get('name'),
+            name=name,
             birth_date=request.form.get('birth_date'),
             date_of_death=request.form.get('date_of_death')
         )
 
-        ## Check if the author already exists in the database
         existing_author = Author.query.filter_by(name=new_author.name).first()
         if existing_author:
-            ## If the author already exists, show an error message
             message = f"Author '{new_author.name}' already exists."
-            return render_template('add_author.html', message=message)
+            return render_template('add_author.html',
+                                   message=message)
 
-        ## Add the new author to the database
         db.session.add(new_author)
         db.session.commit()
 
-        ## Show a success message
         message = f"Author '{new_author.name}' added successfully."
-        return render_template('add_author.html', message=message)
+        return render_template('add_author.html',
+                               message=message)
 
     return render_template('add_author.html')
 
@@ -138,42 +144,46 @@ def add_book():
     """
     Adds a new book to the database.
 
-    If a Get request is made, it returns a render of the
-    add_book.html template.
+    It retrieves all authors from the database and
+    passes them to the template (for the author down-drop
+    menu). It passes it after an error or after adding a book,
+    so the user can keep trying to add a book.
 
-    If a Post request is made, it retrieves the data from the
-    form, checks if the book already exists in the database:
-        - If the book already exists, it returns an error message.
-        - If the book does not exist:
-            - It retrieves the author ID from the database.
-            - It creates a new book object and adds it to the
-            database.
-            - It returns a success message.
+    If a Get request is made, it returns a render of the
+    add_book.html template with a form to add a new book.
+
+    If a Post request is made, it retrieves the data from
+    the form:
+    - retrieves the author ID from the database
+    - checks if the book already exists in the database by
+      checking the ISBN, if it does, it returns an error
+      message
     """
+    authors = Author.query.all()
+    authors = [author.name for author in authors]
+
     if request.method == 'POST':
-        ## Get the data from the form
         isbn = request.form.get('isbn')
         title = request.form.get('title')
         author = request.form.get('author')
         year = request.form.get('year')
 
-        ## Retrieve the author ID from the database
-        author_obj = Author.query.filter_by(name=author).first()
-        if author_obj:
-            author_id = author_obj.id
-        else:
-            ## If the author does not exist, show an error message
-            message = (f"{author} not found in the database."
-                       f"Please add the author first.")
-            return render_template('add_book.html', message=message)
 
-        ## Get the book cover image URL from Open Library API
+        existing_book = Book.query.filter_by(isbn=isbn).first()
+        if existing_book:
+            message = (f"Book with ISBN '{isbn}', '{existing_book.title}',"
+                       f" already exists.")
+            return render_template('add_book.html',
+                                   message=message,
+                                   authors=authors)
+
         if isbn:
             cover = f"https://covers.openlibrary.org/b/isbn/{isbn}-M.jpg"
         else:
             cover = "https://covers.openlibrary.org/b/isbn/142157537X-M.jpg"
 
-        ## Create a new book object
+        author_obj = Author.query.filter_by(name=author).first()
+        author_id = author_obj.id
         new_book = Book(
                 isbn=isbn,
                 title=title,
@@ -182,58 +192,60 @@ def add_book():
                 cover=cover
         )
 
-        ## Check if the book already exists in the database
-        existing_book = Book.query.filter_by(isbn=new_book.isbn).first()
-        if existing_book:
-            ## If the book already exists, show an error message
-            message = f"Book with ISBN '{new_book.isbn}' already exists."
-            return render_template('add_book.html', message=message)
-
-        ## Add the new book to the database
         db.session.add(new_book)
         db.session.commit()
 
-        ## Show a success message
         message = f"Book '{new_book.title}' added successfully."
-        return render_template('add_book.html', message=message)
+        return render_template('add_book.html',
+                               message=message,
+                               authors=authors)
 
-    return render_template('add_book.html')
+    return render_template('add_book.html',
+                           authors=authors)
 
 
-@app.route('/book/<int:book_id>/delete', methods=['POST'])
+@app.route('/book/<int:book_id>/delete', methods=['GET', 'POST'])
 def delete_book(book_id):
     """
     Deletes a book from the database (sad).
 
-    If a Post request is made through the delete button in the
-    home.html template, it retrieves the book ID from the
-    URL.
+    If a Get request is made, it returns a render of the
+    delete_book.html template with the book ID.
+    Asks the user to confirm the deletion of the book.
+    If the user cancels the deletion, it redirects to the home page.
 
-    If the book exists, it deletes the book from the database
-    and returns a success message.
+    If a Post request is made, it retrieves the book ID and the
+    author ID from the database.
     If the book does not exist, it returns an error message.
-
-    Checks if the author has any other books in the database.
-    If the author has no other books, it deletes the author...
-    ... but I prefer not to delete the author.
+    If the book exists, it deletes the book from the database.
+    If the author has no other books, it deletes the author
+    from the database.
+    After deletion, it returns a success message and redirects
+    to the home page.
     """
-    book = Book.query.get(book_id)
-    if book:
-        #author_id = book.author_id
-        db.session.delete(book)
-        db.session.commit()
+    if request.method == 'POST':
+        book = Book.query.get(book_id)
+        author = book.author if book else None
+        if book:
+            db.session.delete(book)
+            db.session.commit()
 
-        ## Check if the author has any other books in the database
-        #author = Author.query.get(author_id)
-        #if not author.books:
-        #    db.session.delete(author)
-        #    db.session.commit()
+            if not author.books:
+               db.session.delete(author)
+               db.session.commit()
 
-        message = f"Book '{book.title}' deleted successfully."
-    else:
-        message = "Book not found."
+            status = "Success!"
+            message = f"Book '{book.title}' deleted successfully."
+        else:
+            status = "Error!"
+            message = "Book not found."
 
-    return render_template('home.html', message=message)
+        return render_template('redirect.html',
+                               message=message,
+                               status=status)
+
+    return render_template('delete_book.html',
+                           book_id=book_id)
 
 
 if __name__ == '__main__':

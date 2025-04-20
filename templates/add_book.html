@@ -6,23 +6,45 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>My Book App</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function validateForm() {
+            const isbnInput = document.getElementById('isbn');
+            const yearInput = document.getElementById('year');
+
+            if (isbnInput.value.length < 10 || isbnInput.value.length > 13) {
+            alert("ISBN must be between 10 and 13 digits.");
+            return false;
+            }
+
+            if (yearInput.value.length !== 4) {
+            alert("Publication Year must be 4 digits.");
+            return false;
+            }
+
+            return true;
+        }
+    </script>
   </head>
   <body>
   <div>
       <a href="/home" class="button">Books</a>
       <a href="/add_author" class="button">Add Author</a>
-    </div>
-    <div class="form" id="Form">
-      <h2>Add Book</h2>
-        <form action="/add_book" method="POST">
-          <label for="isbn">ISBN:</label>
-          <input type="text" id="isbn" name="isbn"><br><br>
-          <label for="title">Book Title:</label>
-          <input type="text" id="title" name="title" required><br><br>
+  </div>
+  <div class="form" id="Form">
+    <h2>Add Book</h2>
+    <form action="/add_book" method="POST" onsubmit="return validateForm()">
           <label for="author">Author:</label>
-          <input type="text" id="author" name="author" required><br><br>
+          <select id="author" name="author" minlength="4" required>
+            {% for author in authors %}
+            <option value="{{ author }}">{{ author }}</option>
+            {% endfor %}
+          </select><br><br>
+          <label for="isbn">ISBN:</label>
+          <input type="text" id="isbn" name="isbn" required min="100000000" max="9999999999999"><br><br>
+          <label for="title">Book Title:</label>
+          <input type="text" id="title" name="title" required minlength="1" maxlength="50"><br><br>
           <label for="year">Publication Year:</label>
-          <input type="text" id="year" name="year"><br><br>
+          <input type="number" id="year" name="year" min="1800" max="2030"><br><br>
           <input type="submit" value="Add Book" class="button">
         </form>
     </div>

@@ -35,12 +35,11 @@
       <a href="/home?sort=year&order=desc" class="button">By Year (newest)</a>
     </div>
 
-
     <div class="books-grid">
       {% for book in books %}
         <article class="book">
           <img class="book-cover" src="{{ book.cover }}" alt="{{ book.title }} cover"/>
-          <form method="POST" action="{{ url_for('delete_book', book_id=book.id) }}">
+          <form action="{{ url_for('delete_book', book_id=book.id) }}" method="get">
             <button type="submit" class="button"><i class="fa fa-trash" aria-hidden="true"></i></i></button>
           </form>
           <div class="book-title"> {{ book.title }} </div>

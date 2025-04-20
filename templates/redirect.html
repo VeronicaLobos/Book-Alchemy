@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>My Book App</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script>
+        setTimeout(function() {
+            window.location.href = "{{ url_for('get_books') }}";
+        }, 3000); // Redirect after 3 seconds
+    </script>
+  </head>
+  <body>
+    <div class="list-books-title">
+      <h1>My Book App</h1>
+      <a href="/add_book" class="button">Add Book</a>
+      <a href="/add_author" class="button">Add Author</a>
+      <form class="form" action="/home" method="GET">
+      <input type="text" placeholder="Search..." name="search">
+      <button type="submit" class="button"><i class="fa fa-search"></i></button>
+      </form>
+    </div>
+  <div>
+    <h2>{{ status }}</h2>
+    <div class="post-message">
+        <h3>{{ message }}</h3>
+        <h3>You will be redirected back to the Home page in 3 seconds...</h3>
+    </div>
+  </div>
+  </body>
+</html>

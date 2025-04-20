@@ -11,7 +11,6 @@ tables in the database, respectively.
 
 from sqlalchemy import Integer, String, ForeignKey
 from flask_sqlalchemy import SQLAlchemy
-import requests as req
 
 # Flask-SQLAlchemy instance
 db = SQLAlchemy()
@@ -36,8 +35,9 @@ class Author(db.Model):
     date_of_death = db.Column(String)
     books = db.relationship("Book", back_populates="author")
 
-    def __repr__(self):
-        return (f"Author(id={self.id}, name='{self.name}', "
+    def __str__(self):
+        return (f"Author(id={self.id}, "
+                f"name='{self.name}', "
                 f"birth_date='{self.birth_date}', "
                 f"date_of_death='{self.date_of_death}')")
 
@@ -62,8 +62,10 @@ class Book(db.Model):
     author_id = db.Column(Integer, ForeignKey('authors.id'))
     author = db.relationship("Author", back_populates="books")
 
-    def __repr__(self):
-        return (f"Book(id={self.id}, isbn={self.isbn}, "
+    def __str__(self):
+        return (f"Book(id={self.id}, "
+                f"isbn={self.isbn}, "
                 f"title='{self.title}', "
                 f"publication_date='{self.publication_date}', "
+                f"cover='{self.cover}', "
                 f"author_id={self.author_id})")
